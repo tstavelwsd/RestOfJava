@@ -74,10 +74,25 @@ public class Program {
         System.out.println(result2);
     }
     
+    public static void printArray(String... args) {
+        System.out.println("Printing " + args.length + " strings:");
+        for(String s : args) {
+            System.out.println(s);
+        }
+    }
+    
+    public static void demoVarArgs() {
+        String[] arr1 = {"abc", "def", "ghj"};
+        printArray(arr1);
+        printArray("xyz", "wuv");
+        printArray();
+    }
+    
     public static void main(String[] args) {
         demoFunctionalInterfaces();
         demoAnonymousClasses();
         demoSwitch();
         demoTernary();
+        demoVarArgs();
     }
 }
