@@ -10,14 +10,18 @@ import graphics.Canvas;
  * on a canvas.
  */
 public class Shape {
-    private Color _color;
+    private int _rColor;
+    private int _gColor;
+    private int _bColor;
     
     public Shape(Color color) {
-        _color = color;
+        _rColor = color.getRed();
+        _gColor = color.getGreen();
+        _bColor = color.getBlue();
     }
     
     public void draw(Canvas canvas) {
-        canvas.setColor(_color);
+        canvas.setColor(new Color(_rColor, _gColor, _bColor));
     }
     
     public void translate(int dx, int dy) {
