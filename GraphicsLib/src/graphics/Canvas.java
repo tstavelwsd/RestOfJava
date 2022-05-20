@@ -1,8 +1,10 @@
 package graphics;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -29,6 +31,7 @@ public class Canvas {
     private final int DEFAULT_YMIN = -340;
     private final int DEFAULT_XMAX = 512;
     private final int DEFAULT_YMAX = 340;
+    private final int DEFAULT_PINSIZE = 8;
     // EndRegion: Class default Constants
 
     // Region: Private & protected class field members
@@ -36,6 +39,11 @@ public class Canvas {
     protected boolean _paintAxes;
     protected Color _color, _colorAxes;
     protected int _xMin, _yMin, _xMax, _yMax;
+    protected static int _lastX = 0;
+    protected static int _lastY = 0;
+    
+    private static BasicStroke _strokePin = new BasicStroke(1);
+    private static BasicStroke _strokeLine = new BasicStroke(4);
 
     private KeyEvent _keyEvent = null;
     private Object _keySync = new Object();
@@ -181,6 +189,11 @@ public class Canvas {
 
     public Canvas() {
         reset();
+    }
+    
+    public Canvas(int xMin, int yMin, int xMax, int yMax, int scale) {
+        reset();
+        setRange(xMin, yMin, xMax, yMax, scale);
     }
 
     // Region: Internal getters
@@ -380,13 +393,124 @@ public class Canvas {
 		return success;
     }
     
+//    public boolean plot(int x, int y) {
+//        boolean success = isOpened();
+//        if (success) {
+//            Graphics g = _panel.getGraphics();
+//            int xp = transX(x);
+//            int yp = transY(y);
+//            g.fillRect(xp, yp, _scale, _scale);
+//        }
+//        return success;
+//    }
+    
+    /**
+     * Draws a point/bubble on canvas, at the given coordinates
+     * @param x - x coordinate
+     * @param y - y coordinate
+     * @return true if successful, false otherwise
+     */
     public boolean plot(int x, int y) {
         boolean success = isOpened();
         if (success) {
-            Graphics g = _panel.getGraphics();
-            int xp = transX(x);
-            int yp = transY(y);
-            g.fillRect(xp, yp, _scale, _scale);
+            Graphics2D g = (Graphics2D)getGraphics();
+            g.setStroke(_strokePin);
+            g.fillOval(
+                    transX(x) - DEFAULT_PINSIZE/2,
+                    transY(y) - DEFAULT_PINSIZE/2,
+                    DEFAULT_PINSIZE, DEFAULT_PINSIZE);
+            _lastX = x;
+            _lastY = y;
+        }
+        return success;
+    }
+    
+    /**
+     * Draws a line from the last position drawn on the map to the given coordinate.
+     * i.e.: if last draw operation was line(10, 10, 20, 20), the line drawn by
+     * line(42, 64) has the starting point at (20, 20) and the ending point at (42, 64)
+     * @param x - x coordinate of the ending point of the line
+     * @param y - y coordinate of the ending point of the line
+     * @return true if successful, false otherwise
+     */
+    public boolean lineTo(int x, int y) {
+        boolean success = isOpened();
+        if (success) {
+            Graphics2D g = (Graphics2D)getGraphics();
+            g.setStroke(_strokeLine);
+            g.drawLine(transX(_lastX), transY(_lastY), transX(x), transY(y));
+            _lastX = x;
+            _lastY = y;
+            plot(_lastX, _lastY);
+        }
+        return success;
+    }
+    
+    /**
+     * Draws a line in between the (xFrom, yFrom) and (xTo, yTo) coordinates.
+     * @param xFrom - x coordinate of the starting point
+     * @param yFrom - y coordinate of the starting point
+     * @param xTo - x coordinate of the ending point
+     * @param yTo - y coordinate of the ending point
+     * @return true if successful, false otherwise
+     */
+    public boolean line(int xFrom, int yFrom, int xTo, int yTo) {
+        boolean success = isOpened();
+        if (success) {
+            plot(xFrom, yFrom);
+            lineTo(xTo, yTo);
+        }
+        return success;
+    }
+    
+    /**
+     * Draws a circle with the given center and of the given diameter. If the circle is not
+     * fully contained on the map, the method will not fail, but only the portions that 
+     * intersect the map area will be shown.
+     * @param xCenter - x coordinate of the center of the circle.
+     * @param yCenter - y coordinate of the center of the circle.
+     * @param radius - the radius of the circle
+     * @return true if successful, false otherwise
+     */
+    public boolean circle(int xCenter, int yCenter, int radius) {
+        boolean success = isOpened();
+        if (success) {
+            Graphics2D g = (Graphics2D)getGraphics();
+            g.setStroke(_strokeLine);
+            g.drawOval(
+                    transX(xCenter - radius), 
+                    transY(yCenter + radius), 
+                    2 * radius * _scale, 
+                    2 * radius * _scale);
+            _lastX = xCenter;
+            _lastY = yCenter;
+
+        }
+        return success;
+    }
+    
+    /**
+     * Draws an oval with the given center and of the given width and height. 
+     * If the oval is not fully contained on the map, the method will not fail,
+     * but only the portions that intersect the map area will be shown. 
+     * @param xCenter - x coordinate of the center of the circle.
+     * @param yCenter - y coordinate of the center of the circle.
+     * @param radius - the radius of the circle
+     * @return true if successful, false otherwise
+     */
+    public boolean oval(int xCenter, int yCenter, int width, int height) {
+        boolean success = isOpened();
+        if (success) {
+            Graphics2D g = (Graphics2D)getGraphics();
+            g.setStroke(_strokeLine);
+            g.drawOval(
+                    transX(xCenter - width / 2), 
+                    transY(yCenter + height / 2), 
+                    width * _scale, 
+                    height * _scale);
+            _lastX = xCenter;
+            _lastY = yCenter;
+
         }
         return success;
     }
