@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # RestOfJava
 Repo Contains a Java project to be used as starting point for practicing with advanced Java concepts:
 - functional interfaces,
@@ -7,3 +8,6 @@ Repo Contains a Java project to be used as starting point for practicing with ad
 - switch statement.
 
 The project contains a power point describing all the features and listing all the steps to complete the project.
+=======
+# JsonSerialization
+>>>>>>> branch 'main' of https://github.com/FlorinTeo/JsonSerialization.git
