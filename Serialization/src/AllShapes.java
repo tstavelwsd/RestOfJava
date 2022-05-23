@@ -1,4 +1,11 @@
 import java.awt.Color;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.util.Scanner;
+
+import com.google.gson.GsonBuilder;
+import com.google.gson.Gson;
 
 import graphics.Canvas;
 import shapes.Circle;
@@ -27,7 +34,7 @@ public class AllShapes {
                         new Point(50, 80)
                 });
     }
-
+    
     /**
      * Draws all the shapes on the canvas.
      */
