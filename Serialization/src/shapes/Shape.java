@@ -9,12 +9,13 @@ import graphics.Canvas;
  * on a canvas.
  */
 public class Shape {
-    private String _type = this.getClass().getName();
+    private String _type;
     private int _rColor;
     private int _gColor;
     private int _bColor;
     
     public Shape(Color color) {
+        _type = this.getClass().getName();
         _rColor = color.getRed();
         _gColor = color.getGreen();
         _bColor = color.getBlue();
