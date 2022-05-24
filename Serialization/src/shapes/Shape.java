@@ -1,7 +1,6 @@
 package shapes;
 
 import java.awt.Color;
-
 import graphics.Canvas;
 
 /**
@@ -10,6 +9,7 @@ import graphics.Canvas;
  * on a canvas.
  */
 public class Shape {
+    private String _type = this.getClass().getName();
     private int _rColor;
     private int _gColor;
     private int _bColor;

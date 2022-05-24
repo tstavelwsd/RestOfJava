@@ -1,11 +1,20 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.lang.reflect.Type;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 
 import graphics.Canvas;
+import shapes.Circle;
+import shapes.Line;
+import shapes.Point;
+import shapes.Polygon;
+import shapes.Shape;
 
 public class Program {
     
@@ -25,8 +34,21 @@ public class Program {
     public static void loadShapes(String jsonFileName) throws FileNotFoundException {
         Scanner jsonFile = new Scanner(new File(jsonFileName));
         String jsonAllShapes = jsonFile.nextLine();
-        Gson deserializer = new Gson();
-        _shapes = deserializer.fromJson(jsonAllShapes, AllShapes.class);
+        
+        Type allShapesType = new TypeToken<AllShapes>(){}.getType();
+        
+        RuntimeTypeAdapterFactory<Shape> shapeTypeFactory = RuntimeTypeAdapterFactory  
+                .of(Shape.class, "_type", true)
+                .registerSubtype(Point.class, Point.class.getName())
+                .registerSubtype(Circle.class, Circle.class.getName())
+                .registerSubtype(Line.class, Line.class.getName())
+                .registerSubtype(Polygon.class, Polygon.class.getName());
+        
+        Gson deserializer = new GsonBuilder()
+                .registerTypeAdapterFactory(shapeTypeFactory)
+                .create();
+
+        _shapes = deserializer.fromJson(jsonAllShapes, allShapesType);
     }
     
     /**
