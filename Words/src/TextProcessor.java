@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.Scanner;
 
 /**
  * Class loading text from a file and extracting specific
@@ -19,9 +20,19 @@ public class TextProcessor {
         }
         
         System.out.printf("Loading text from '%s'\n", f.getAbsolutePath());
-        
+
         /* TODO: Insert code for loading the text from the file into
          * the internal map. */
+
+        int lineNo = 0;
+        Scanner reader = new Scanner(f, "UTF-8");
+        while(reader.hasNextLine()) {
+            lineNo++;
+            String line = reader.nextLine();
+            System.out.println(line);
+        }
+        System.out.println(lineNo);
+        reader.close();
     }
     
     /**
